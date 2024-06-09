@@ -1,13 +1,13 @@
-package hospital.filas.FilasHospital;
+package hospital.data.DataHospital;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FilasHospitalApplication {
+public class DataHospitalApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(hospital.filas.FilasHospital.FilasHospitalApplication.class, args);
+		SpringApplication.run(hospital.data.DataHospital.DataHospitalApplication.class, args);
 	}
 
 }
