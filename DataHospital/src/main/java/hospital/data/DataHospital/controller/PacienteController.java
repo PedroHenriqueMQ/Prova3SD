@@ -38,9 +38,12 @@ public class PacienteController {
         return pacienteService.findAllWithoutId();
     }
 
-    @PutMapping
-    public Optional<PacienteDetailedDTO> updatePaciente(@RequestBody PacienteDetailedDTO pacienteDetailedDTO) {
-        Optional<Long> pacienteId = pacienteService.findIdByCpf(pacienteDetailedDTO.getCpf());
+    @PutMapping("/cpf={cpf}")
+    public Optional<PacienteDetailedDTO> updatePaciente(
+            @RequestBody PacienteDetailedDTO pacienteDetailedDTO,
+            @PathVariable("cpf") String cpf) {
+
+        Optional<Long> pacienteId = pacienteService.findIdByCpf(cpf);
 
         if (pacienteId.isPresent()) {
             Paciente paciente = new Paciente();
@@ -51,6 +54,16 @@ public class PacienteController {
             paciente.setPrioridade(pacienteDetailedDTO.getPrioridade());
 
             pacienteService.save(paciente);
+
+            if (!cpf.equals(pacienteDetailedDTO.getCpf())) {
+                List<HistoricoChamada> historicoChamadaList = historicoChamadaService.findAllByPacienteCpfWithId(cpf);
+
+                for (HistoricoChamada historicoChamada : historicoChamadaList) {
+                    historicoChamada.getPaciente().setCpf(pacienteDetailedDTO.getCpf());
+                    historicoChamadaService.save(historicoChamada);
+                }
+            }
+
             return Optional.of(new PacienteDetailedDTO(paciente));
         } else return Optional.empty();
     }

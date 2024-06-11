@@ -1,7 +1,6 @@
 package hospital.data.DataHospital.DTO;
 
 import hospital.data.DataHospital.model.HistoricoChamada;
-import hospital.data.DataHospital.model.Paciente;
 import java.time.LocalDateTime;
 
 public class HistoricoChamadaDTO {
