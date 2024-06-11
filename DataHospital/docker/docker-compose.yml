@@ -1,0 +1,13 @@
+version: '3.3'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: database_pacientes
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: pacientes_db
+    ports:
+      - "5433:5432"
+    restart: on-failure
