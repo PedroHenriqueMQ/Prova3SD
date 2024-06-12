@@ -8,28 +8,28 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.List;
 
 @Service
-public class RabbitMQService {
+public class PacienteRabbitMQService {
     private AmqpTemplate amqpTemplate;
     private ObjectMapper objectMapper;
 
     @Autowired
-    public RabbitMQService(AmqpTemplate amqpTemplate, ObjectMapper objectMapper) {
+    public PacienteRabbitMQService(AmqpTemplate amqpTemplate, ObjectMapper objectMapper) {
         this.amqpTemplate = amqpTemplate;
         this.objectMapper = objectMapper;
     }
 
-    public void readPaciente(PacienteDetailedDTO pacienteDetailedDTO) throws JsonProcessingException {
+    private Message message(PacienteDetailedDTO pacienteDetailedDTO) throws JsonProcessingException {
         String json = objectMapper.writeValueAsString(pacienteDetailedDTO);
         MessageProperties properties = new MessageProperties();
         properties.setPriority(pacienteDetailedDTO.getPrioridade().ordinal());
         Message message = new Message(json.getBytes(), properties);
-        amqpTemplate.convertAndSend("read-paciente", message);
+        return message;
+    }
+
+    public void readPaciente(PacienteDetailedDTO pacienteDetailedDTO) throws JsonProcessingException {
+        amqpTemplate.convertAndSend("read-paciente", message(pacienteDetailedDTO));
     }
 
     public void readAllPacientes() {
@@ -40,26 +40,14 @@ public class RabbitMQService {
     }
 
     public void updatePaciente(PacienteDetailedDTO pacienteDetailedDTO) throws JsonProcessingException {
-        String json = objectMapper.writeValueAsString(pacienteDetailedDTO);
-        MessageProperties properties = new MessageProperties();
-        properties.setPriority(pacienteDetailedDTO.getPrioridade().ordinal());
-        Message message = new Message(json.getBytes(), properties);
-        amqpTemplate.convertAndSend("update-paciente", message);
+        amqpTemplate.convertAndSend("update-paciente", message(pacienteDetailedDTO));
     }
 
     public void createPaciente(PacienteDetailedDTO pacienteDetailedDTO) throws JsonProcessingException {
-        String json = objectMapper.writeValueAsString(pacienteDetailedDTO);
-        MessageProperties properties = new MessageProperties();
-        properties.setPriority(pacienteDetailedDTO.getPrioridade().ordinal());
-        Message message = new Message(json.getBytes(), properties);
-        amqpTemplate.convertAndSend("create-paciente", message);
+        amqpTemplate.convertAndSend("create-paciente", message(pacienteDetailedDTO));
     }
 
     public void deletePaciente(PacienteDetailedDTO pacienteDetailedDTO) throws JsonProcessingException {
-        String json = objectMapper.writeValueAsString(pacienteDetailedDTO);
-        MessageProperties properties = new MessageProperties();
-        properties.setPriority(pacienteDetailedDTO.getPrioridade().ordinal());
-        Message message = new Message(json.getBytes(), properties);
-        amqpTemplate.convertAndSend("delete-paciente", message);
+        amqpTemplate.convertAndSend("delete-paciente", message(pacienteDetailedDTO));
     }
 }
